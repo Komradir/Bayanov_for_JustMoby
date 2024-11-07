@@ -1,0 +1,37 @@
+user {{www-data}}; #имя пользователя от имени которого запускается программа
+worker_processes auto; #число запускаемых процессов nginx
+pid /run/nginx.pid; #сюда будет записываеться номер главного процесса 
+error_log /var/log/nginx/error.log; #сюда будет зап. отчеты об шобках
+include /etc/nginx/modules-enabled/*.conf; # подлючения одноименной дер., в неё будут подкл. динамические модули
+
+events { #так называемый "контекст", конкретно в этот запис. глобальные параметры влияющие на все соединения web сервера
+        worker_connections {{worker_connections}}; #колич соедин поддерживаемых одновременно
+}
+
+http { 
+
+        sendfile on; #разрешаем исп. одноименную "функцию" php
+        tcp_nopush on; #включение буферизации контента перед отправкой пользователю
+        types_hash_max_size 2048; #хеш таблица не могут быть большего этого числа (измеряется количесвтом строк)
+
+        include /etc/nginx/mime.types; # подлючение файла с сопоставлением файлов и типами MINE
+        default_type application/octet-stream; # топ MINE по умолчанию
+        client_max_body_size {{client_max_body_size}}; # максимальный вес запроса клиента
+
+        # Дописываю поддержку SSL и указываю где находятся сертификаты
+
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3 SSLv2 SSLv3;
+        ssl_prefer_server_ciphers on;
+        ssl_certificate /etc/letsencrypt/live/{{domain_name}}/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/{{domain_name}}/privkey.pem;
+
+        access_log /var/log/nginx/access.log;
+
+        # выключаю сжатие перед отправкой т.к. согласно файлу site-avalible/default это нужно что бы не багало соединение через 443
+
+        gzip off;
+
+        include /etc/nginx/conf.d/*.conf;
+        include /etc/nginx/sites-enabled/*;
+}
+

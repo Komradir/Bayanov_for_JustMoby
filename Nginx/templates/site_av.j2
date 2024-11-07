@@ -1,0 +1,26 @@
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        listen 443 ssl default_server;
+        listen [::]:443 ssl default_server;
+
+        root /var/www/{{domain_name}};
+        client_max_body_size "{{client_max_body_size}}";
+
+        index index.html index.htm index.nginx-debian.html index.php; #дописал index.php
+
+        server_name {{domain_name}};
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+        #подключаю php fpm
+        location ~ \.php$ {
+               include snippets/fastcgi-php.conf;
+               fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        }
+
+}
+
+

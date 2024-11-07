@@ -1,0 +1,6 @@
+- name: zapusk roly Nginx
+  hosts: web
+  become: yes
+  gather_facts: yes
+  roles:
+          - Nginx

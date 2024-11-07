@@ -1,0 +1,20 @@
+---
+# vars file for Nginx
+
+    pak_to_remove:  #официальная документация snap и certbot призывает проверить есть ли в ОС предустановленный snap и удалить его 
+      - Snap
+
+    webpak:
+      - nginx
+      - snap #пакетный менеджер, нужен для устновки certbot со всеми зависемотями и плагинами
+      - php-fpm #более продвинутая реализания php, больше функционала
+
+#####################################################################
+
+    domain_name: komradircloud.ddns.net
+    mail: b-d45@mail.ru
+
+    worker_connections: 1024
+    client_max_body_size: 0 #значение 0 говорит о там что ограничения нет
+
+    user_name: webu1
